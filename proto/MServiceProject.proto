@@ -1,0 +1,1133 @@
+// Copyright 2019 Demian Harvill
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+syntax = "proto3";
+
+package org.gaterace.mservice.project;
+option csharp_namespace = "MServiceProject";
+option go_package = "mserviceproject";
+
+import "DmlExtension.proto";
+
+
+service MServiceProject {
+    // create a new project
+    rpc create_project (CreateProjectRequest) returns (CreateProjectResponse);
+    // update an existing project
+    rpc update_project (UpdateProjectRequest) returns (UpdateProjectResponse);
+    // delete an existing project
+    rpc delete_project (DeleteProjectRequest) returns (DeleteProjectResponse);
+    // get list of project names for this mservice id
+    rpc get_project_names (GetProjectNamesRequest) returns (GetProjectNamesResponse);
+    // get project entity by name
+    rpc get_project_by_name (GetProjectByNameRequest) returns (GetProjectByNameResponse);
+    // get project entity by id
+    rpc get_project_by_id (GetProjectByIdRequest) returns (GetProjectByIdResponse);
+    // get project entity wrapper by name
+    rpc get_project_wrapper_by_name (GetProjectWrapperByNameRequest) returns (GetProjectWrapperByNameResponse);
+    // get project entity wrapper by id
+    rpc get_project_wrapper_by_id (GetProjectWrapperByIdRequest) returns (GetProjectWrapperByIdResponse);
+    // create a new status type
+    rpc create_status_type (CreateStatusTypeRequest) returns (CreateStatusTypeResponse);
+    // update a status type
+    rpc update_status_type (UpdateStatusTypeRequest) returns (UpdateStatusTypeResponse);
+    // delete a status type
+    rpc delete_status_type (DeleteStatusTypeRequest) returns (DeleteStatusTypeResponse);
+    // get status type by id
+    rpc get_status_type (GetStatusTypeRequest) returns (GetStatusTypeResponse);
+    // get all status types for this mservice id
+    rpc get_status_types (GetStatusTypesRequest) returns (GetStatusTypesResponse);
+    // create a new task
+    rpc create_task (CreateTaskRequest) returns (CreateTaskResponse);
+    // update an existing task
+    rpc update_task (UpdateTaskRequest) returns (UpdateTaskResponse);
+    // delete an existing task
+    rpc delete_task (DeleteTaskRequest) returns (DeleteTaskResponse);
+    // get a task by id
+    rpc get_task_by_id (GetTaskByIdRequest) returns (GetTaskByIdResponse);
+    // get a task with asspciations by id
+    rpc get_task_wrapper_by_id (GetTaskWrapperByIdRequest) returns (GetTaskWrapperByIdResponse);
+    // reorder the positions of child tasks
+    rpc reorder_child_tasks (ReorderChildTasksRequest) returns (ReorderChildTasksResponse);
+    // get list of tasks in project
+    rpc get_tasks_by_project (GetTasksByProjectRequest) returns (GetTasksByProjectResponse);
+    // create a new team member for the project
+    rpc create_team_member (CreateTeamMemberRequest) returns (CreateTeamMemberResponse);
+    // update an existing team member
+    rpc update_team_member (UpdateTeamMemberRequest) returns (UpdateTeamMemberResponse);
+    // delete an existing team member
+    rpc delete_team_member (DeleteTeamMemberRequest) returns (DeleteTeamMemberResponse);
+    // get team member by id
+    rpc get_team_member_by_id (GetTeamMemberByIdRequest) returns (GetTeamMemberByIdResponse);
+    // get team members by project
+    rpc get_team_member_by_project (GetTeamMemberByProjectRequest) returns (GetTeamMemberByProjectResponse);
+    // get team members by task
+    rpc get_team_member_by_task (GetTeamMemberByTaskRequest) returns (GetTeamMemberByTaskResponse);
+    // add a team member to a task
+    rpc add_team_member_to_task (AddTeamMemberToTaskRequest) returns (AddTeamMemberToTaskResponse);
+    // remove a team member from a task
+    rpc remove_team_member_from_task (RemoveTeamMemberFromTaskRequest) returns (RemoveTeamMemberFromTaskResponse);
+    // add to existing task hours for task and member
+    rpc add_task_hours (AddTaskHoursRequest) returns (AddTaskHoursResponse);
+    // create a new project role type
+    rpc create_project_role_type (CreateProjectRoleTypeRequest) returns (CreateProjectRoleTypeResponse);
+    // update an existing project role type
+    rpc update_project_role_type (UpdateProjectRoleTypeRequest) returns (UpdateProjectRoleTypeResponse);
+    // delete an existing project role type
+    rpc delete_project_role_type (DeleteProjectRoleTypeRequest) returns (DeleteProjectRoleTypeResponse);
+    // get a project role type by id
+    rpc get_project_role_type (GetProjectRoleTypeRequest) returns (GetProjectRoleTypeResponse);
+    // get all project role types for an mservice id
+    rpc get_project_role_types (GetProjectRoleTypesRequest) returns (GetProjectRoleTypesResponse);
+  
+}
+
+
+
+// MService project entity
+message Project {
+    // project identifier
+    int64 project_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // entity name
+    string name = 8;
+    // entity description
+    string description = 9;
+    // status identifier
+    int32 status_id = 10;
+    // status name
+    string status_name = 11;
+    // project start date
+    dml.DateTime start_date = 12;
+    // project end date
+    dml.DateTime end_date = 13;
+
+}
+
+// MService project entity with associations
+message ProjectWrapper {
+    // project identifier
+    int64 project_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // entity name
+    string name = 8;
+    // entity description
+    string description = 9;
+    // status identifier
+    int32 status_id = 10;
+    // status name
+    string status_name = 11;
+    // project start date
+    dml.DateTime start_date = 12;
+    // project end date
+    dml.DateTime end_date = 13;
+    // list of project team member objects
+    repeated TeamMember team_members = 14;
+    // list of child project task objects with associations
+    repeated TaskWrapper child_task_wrappers = 15;
+
+}
+
+// MService project status type
+message StatusType {
+    // status identifier
+    int32 status_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // status name
+    string status_name = 8;
+    // entity description
+    string description = 9;
+
+}
+
+// MService project task
+message Task {
+    // task identifier
+    int64 task_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // project identifier
+    int64 project_id = 8;
+    // entity name
+    string name = 9;
+    // entity description
+    string description = 10;
+    // status identifier
+    int32 status_id = 11;
+    // status name
+    string status_name = 12;
+    // project start date
+    dml.DateTime start_date = 13;
+    // project end date
+    dml.DateTime end_date = 14;
+    // task priority, 0 low to 9 high
+    int32 priority = 15;
+    // parent task id
+    int64 parent_id = 16;
+    // sibling position
+    int32 position = 17;
+
+}
+
+// MService project task with associations
+message TaskWrapper {
+    // task identifier
+    int64 task_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // project identifier
+    int64 project_id = 8;
+    // entity name
+    string name = 9;
+    // entity description
+    string description = 10;
+    // status identifier
+    int32 status_id = 11;
+    // status name
+    string status_name = 12;
+    // project start date
+    dml.DateTime start_date = 13;
+    // project end date
+    dml.DateTime end_date = 14;
+    // task priority, 0 low to 9 high
+    int32 priority = 15;
+    // parent task id
+    int64 parent_id = 16;
+    // sibling position
+    int32 position = 17;
+    // list of project team member objects
+    repeated TeamMember team_members = 18;
+    // list of child project task objects with associations
+    repeated TaskWrapper child_task_wrappers = 19;
+
+}
+
+// MService project team member
+message TeamMember {
+    // team member id
+    int64 member_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // project identifier
+    int64 project_id = 8;
+    // entity name
+    string name = 9;
+    // role id of this team member
+    int32 project_role_id = 10;
+    // role name of this team member
+    string role_name = 11;
+    // email address of team member
+    string email = 12;
+    // hours allocated to task by team member
+    dml.Decimal task_hours = 13;
+
+}
+
+// MService project role type
+message ProjectRoleType {
+    // role id of this team member
+    int32 project_role_id = 1;
+    // creation date
+    dml.DateTime created = 2;
+    // modification date
+    dml.DateTime modified = 3;
+    // deletion date
+    dml.DateTime deleted = 4;
+    // has record been deleted?
+    bool is_deleted = 5;
+    // version of this record
+    int32 version = 6;
+    // mservice account id
+    int64 mservice_id = 7;
+    // role name of this team member
+    string role_name = 8;
+    // entity description
+    string description = 9;
+
+}
+
+// MService map team member to task
+message TaskToMember {
+    // project identifier
+    int64 project_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // team member id
+    int64 member_id = 3;
+    // creation date
+    dml.DateTime created = 4;
+    // modification date
+    dml.DateTime modified = 5;
+    // deletion date
+    dml.DateTime deleted = 6;
+    // has record been deleted?
+    bool is_deleted = 7;
+    // mservice account id
+    int64 mservice_id = 8;
+    // hours allocated to task by team member
+    dml.Decimal task_hours = 9;
+
+}
+
+// request parameters for method create_project
+message CreateProjectRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // entity name
+    string name = 2;
+    // entity description
+    string description = 3;
+    // status identifier
+    int32 status_id = 4;
+    // project start date
+    dml.DateTime start_date = 5;
+    // project end date
+    dml.DateTime end_date = 6;
+
+}
+
+// response parameters for method create_project
+message CreateProjectResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+    // project identifier
+    int64 project_id = 4;
+
+}
+
+// request parameters for method update_project
+message UpdateProjectRequest {
+    // project identifier
+    int64 project_id = 1;
+    // mservice account id
+    int64 mservice_id = 2;
+    // version of this record
+    int32 version = 3;
+    // entity name
+    string name = 4;
+    // entity description
+    string description = 5;
+    // status identifier
+    int32 status_id = 6;
+    // project start date
+    dml.DateTime start_date = 7;
+    // project end date
+    dml.DateTime end_date = 8;
+
+}
+
+// response parameters for method update_project
+message UpdateProjectResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method delete_project
+message DeleteProjectRequest {
+    // project identifier
+    int64 project_id = 1;
+    // mservice account id
+    int64 mservice_id = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// response parameters for method delete_project
+message DeleteProjectResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method get_project_names
+message GetProjectNamesRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+
+}
+
+// response parameters for method get_project_names
+message GetProjectNamesResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // list of entity names
+    repeated string names = 3;
+
+}
+
+// request parameters for method get_project_by_name
+message GetProjectByNameRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // entity name
+    string name = 2;
+
+}
+
+// response parameters for method get_project_by_name
+message GetProjectByNameResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project object
+    Project project = 3;
+
+}
+
+// request parameters for method get_project_by_id
+message GetProjectByIdRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // project identifier
+    int64 project_id = 2;
+
+}
+
+// response parameters for method get_project_by_id
+message GetProjectByIdResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project object
+    Project project = 3;
+
+}
+
+// request parameters for method get_project_wrapper_by_name
+message GetProjectWrapperByNameRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // entity name
+    string name = 2;
+
+}
+
+// response parameters for method get_project_wrapper_by_name
+message GetProjectWrapperByNameResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project object with associations
+    ProjectWrapper project_wrapper = 3;
+
+}
+
+// request parameters for method get_project_wrapper_by_id
+message GetProjectWrapperByIdRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // project identifier
+    int64 project_id = 2;
+
+}
+
+// response parameters for method get_project_wrapper_by_id
+message GetProjectWrapperByIdResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project object with associations
+    ProjectWrapper project_wrapper = 3;
+
+}
+
+// request parameters for method create_status_type
+message CreateStatusTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // status identifier
+    int32 status_id = 2;
+    // status name
+    string status_name = 3;
+    // entity description
+    string description = 4;
+
+}
+
+// response parameters for method create_status_type
+message CreateStatusTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method update_status_type
+message UpdateStatusTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // status identifier
+    int32 status_id = 2;
+    // version of this record
+    int32 version = 3;
+    // status name
+    string status_name = 4;
+    // entity description
+    string description = 5;
+
+}
+
+// response parameters for method update_status_type
+message UpdateStatusTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method delete_status_type
+message DeleteStatusTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // status identifier
+    int32 status_id = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// response parameters for method delete_status_type
+message DeleteStatusTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method get_status_type
+message GetStatusTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // status identifier
+    int32 status_id = 2;
+
+}
+
+// response parameters for method get_status_type
+message GetStatusTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // status type object
+    StatusType status_type = 3;
+
+}
+
+// request parameters for method get_status_types
+message GetStatusTypesRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+
+}
+
+// response parameters for method get_status_types
+message GetStatusTypesResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // list of status type objects
+    repeated StatusType status_types = 3;
+
+}
+
+// request parameters for method create_task
+message CreateTaskRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // project identifier
+    int64 project_id = 2;
+    // entity name
+    string name = 3;
+    // entity description
+    string description = 4;
+    // status identifier
+    int32 status_id = 5;
+    // project start date
+    dml.DateTime start_date = 6;
+    // project end date
+    dml.DateTime end_date = 7;
+    // task priority, 0 low to 9 high
+    int32 priority = 8;
+    // parent task id
+    int64 parent_id = 9;
+    // sibling position
+    int32 position = 10;
+
+}
+
+// response parameters for method create_task
+message CreateTaskResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+    // task identifier
+    int64 task_id = 4;
+
+}
+
+// request parameters for method update_task
+message UpdateTaskRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // version of this record
+    int32 version = 3;
+    // entity name
+    string name = 4;
+    // entity description
+    string description = 5;
+    // status identifier
+    int32 status_id = 6;
+    // project start date
+    dml.DateTime start_date = 7;
+    // project end date
+    dml.DateTime end_date = 8;
+    // task priority, 0 low to 9 high
+    int32 priority = 9;
+    // parent task id
+    int64 parent_id = 10;
+    // sibling position
+    int32 position = 11;
+
+}
+
+// response parameters for method update_task
+message UpdateTaskResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method delete_task
+message DeleteTaskRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// response parameters for method delete_task
+message DeleteTaskResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method get_task_by_id
+message GetTaskByIdRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+
+}
+
+// response parameters for method get_task_by_id
+message GetTaskByIdResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project task object
+    Task task = 3;
+
+}
+
+// request parameters for method get_task_wrapper_by_id
+message GetTaskWrapperByIdRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+
+}
+
+// response parameters for method get_task_wrapper_by_id
+message GetTaskWrapperByIdResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project task object with associations
+    TaskWrapper task_wrapper = 3;
+
+}
+
+// request parameters for method reorder_child_tasks
+message ReorderChildTasksRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // version of this record
+    int32 version = 3;
+    // list of child task identifiers
+    repeated int64 child_task_ids = 4;
+
+}
+
+// response parameters for method reorder_child_tasks
+message ReorderChildTasksResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method get_tasks_by_project
+message GetTasksByProjectRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // project identifier
+    int64 project_id = 2;
+
+}
+
+// response parameters for method get_tasks_by_project
+message GetTasksByProjectResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // list of project task objects
+    repeated Task tasks = 3;
+
+}
+
+// request parameters for method create_team_member
+message CreateTeamMemberRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // project identifier
+    int64 project_id = 2;
+    // entity name
+    string name = 3;
+    // role id of this team member
+    int32 project_role_id = 4;
+    // email address of team member
+    string email = 5;
+
+}
+
+// response parameters for method create_team_member
+message CreateTeamMemberResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+    // team member id
+    int64 member_id = 4;
+
+}
+
+// request parameters for method update_team_member
+message UpdateTeamMemberRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // team member id
+    int64 member_id = 2;
+    // version of this record
+    int32 version = 3;
+    // entity name
+    string name = 4;
+    // role id of this team member
+    int32 project_role_id = 5;
+    // email address of team member
+    string email = 6;
+
+}
+
+// response parameters for method update_team_member
+message UpdateTeamMemberResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method delete_team_member
+message DeleteTeamMemberRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // team member id
+    int64 member_id = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// response parameters for method delete_team_member
+message DeleteTeamMemberResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method get_team_member_by_id
+message GetTeamMemberByIdRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // team member id
+    int64 member_id = 2;
+
+}
+
+// response parameters for method get_team_member_by_id
+message GetTeamMemberByIdResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project team member object
+    TeamMember team_member = 3;
+
+}
+
+// request parameters for method get_team_member_by_project
+message GetTeamMemberByProjectRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // project identifier
+    int64 project_id = 2;
+
+}
+
+// response parameters for method get_team_member_by_project
+message GetTeamMemberByProjectResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // list of project team member objects
+    repeated TeamMember team_members = 3;
+
+}
+
+// request parameters for method get_team_member_by_task
+message GetTeamMemberByTaskRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+
+}
+
+// response parameters for method get_team_member_by_task
+message GetTeamMemberByTaskResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // list of project team member objects
+    repeated TeamMember team_members = 3;
+
+}
+
+// request parameters for method add_team_member_to_task
+message AddTeamMemberToTaskRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // team member id
+    int64 member_id = 3;
+
+}
+
+// response parameters for method add_team_member_to_task
+message AddTeamMemberToTaskResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+
+}
+
+// request parameters for method remove_team_member_from_task
+message RemoveTeamMemberFromTaskRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // team member id
+    int64 member_id = 3;
+
+}
+
+// response parameters for method remove_team_member_from_task
+message RemoveTeamMemberFromTaskResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+
+}
+
+// request parameters for method add_task_hours
+message AddTaskHoursRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // task identifier
+    int64 task_id = 2;
+    // team member id
+    int64 member_id = 3;
+    // hours allocated to task by team member
+    dml.Decimal task_hours = 4;
+
+}
+
+// response parameters for method add_task_hours
+message AddTaskHoursResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // hours allocated to task by team member
+    dml.Decimal task_hours = 3;
+
+}
+
+// request parameters for method create_project_role_type
+message CreateProjectRoleTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // role id of this team member
+    int32 project_role_id = 2;
+    // role name of this team member
+    string role_name = 3;
+    // entity description
+    string description = 4;
+
+}
+
+// response parameters for method create_project_role_type
+message CreateProjectRoleTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method update_project_role_type
+message UpdateProjectRoleTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // role id of this team member
+    int32 project_role_id = 2;
+    // version of this record
+    int32 version = 3;
+    // role name of this team member
+    string role_name = 4;
+    // entity description
+    string description = 5;
+
+}
+
+// response parameters for method update_project_role_type
+message UpdateProjectRoleTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method delete_project_role_type
+message DeleteProjectRoleTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // role id of this team member
+    int32 project_role_id = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// response parameters for method delete_project_role_type
+message DeleteProjectRoleTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // version of this record
+    int32 version = 3;
+
+}
+
+// request parameters for method get_project_role_type
+message GetProjectRoleTypeRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+    // role id of this team member
+    int32 project_role_id = 2;
+
+}
+
+// response parameters for method get_project_role_type
+message GetProjectRoleTypeResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // project role type object
+    ProjectRoleType role_type = 3;
+
+}
+
+// request parameters for method get_project_role_types
+message GetProjectRoleTypesRequest {
+    // mservice account id
+    int64 mservice_id = 1;
+
+}
+
+// response parameters for method get_project_role_types
+message GetProjectRoleTypesResponse {
+    // method result code
+    int32 error_code = 1;
+    // text error message
+    string error_message = 2;
+    // list of project role type objects
+    repeated ProjectRoleType role_types = 3;
+
+}
+
+
+
