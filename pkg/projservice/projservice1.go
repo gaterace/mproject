@@ -20,6 +20,7 @@ import (
 	"errors"
 	"log"
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -32,11 +33,13 @@ var NotImplemented = errors.New("not implemented")
 type projService struct {
 	logger *log.Logger
 	db     *sql.DB
+	startSecs int64
 }
 
 // Get a new projService instance.
 func NewProjectService() *projService {
 	svc := projService{}
+	svc.startSecs = time.Now().Unix()
 	return &svc
 }
 

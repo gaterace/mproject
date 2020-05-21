@@ -17,6 +17,7 @@ import (
 	"context"
 	"database/sql"
 	"strings"
+	"time"
 
 	"github.com/gaterace/dml-go/pkg/dml"
 
@@ -719,4 +720,16 @@ func (s *projService) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjec
 	}
 
 	return resp, err
+}
+
+// get current server version and uptime - health check
+func (s *projService) GetServerVersion(ctx context.Context, req *pb.GetServerVersionRequest) (*pb.GetServerVersionResponse, error) {
+	s.logger.Printf("GetServerVersion called\n")
+	resp := &pb.GetServerVersionResponse{}
+
+	currentSecs := time.Now().Unix()
+	resp.ServerVersion = "v0.9.2"
+	resp.ServerUptime = currentSecs - s.startSecs
+
+	return resp, nil
 }

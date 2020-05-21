@@ -131,6 +131,8 @@ func main() {
 		fmt.Printf("    %s remove_team_member_from_task --tid <task_id> --mid <member_id>\n", prog)
 		fmt.Printf("    %s add_task_hours --tid <task_id> --mid <member_id> --hours <hours>\n", prog)
 
+		fmt.Printf("    %s get_server_version\n", prog)
+
 		os.Exit(1)
 	}
 
@@ -605,6 +607,8 @@ func main() {
 				validParams = false
 			}
 		}
+	case "get_server_version":
+		validParams = true
 
 	default:
 		fmt.Printf("unknown command: %s\n", cmd)
@@ -1039,7 +1043,11 @@ func main() {
 		req.TaskHours = task_hours
 		resp, err := client.AddTaskHours(mctx, &req)
 		printResponse(resp, err)
-
+	case "get_server_version":
+		req := pb.GetServerVersionRequest{}
+		req.DummyParam = 1
+		resp, err := client.GetServerVersion(mctx, &req)
+		printResponse(resp, err)
 	default:
 		fmt.Printf("unknown command: %s\n", cmd)
 		os.Exit(1)

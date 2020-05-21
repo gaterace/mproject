@@ -735,3 +735,8 @@ func (s *projAuth) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjectRo
 
 	return resp, err
 }
+
+// get current server version and uptime - health check
+func (s *projAuth) GetServerVersion(ctx context.Context, req *pb.GetServerVersionRequest) (*pb.GetServerVersionResponse, error) {
+	return s.projService.GetServerVersion(ctx, req)
+}
