@@ -1,6 +1,6 @@
 # configuration for projserver
 
-# location of log file
+# location of log file, leave unset to log to os.stderr
 log_file: log.txt
 # use TLS/SSL for connection to client:
 tls: true
@@ -20,4 +20,5 @@ db_transport: unix(/var/lib/mysql/mysql.sock)
 jwt_pub_file: < jwt_public.pem location >
 # location of JWT private credentials
 jwt_private_file: < jwt_private.pem location >
+
 

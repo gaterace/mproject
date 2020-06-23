@@ -16,6 +16,7 @@ package projservice
 import (
 	"context"
 	"database/sql"
+	"github.com/go-kit/kit/log/level"
 	"regexp"
 	"strings"
 
@@ -30,7 +31,6 @@ var nameValidator = regexp.MustCompile("^[a-z0-9_\\-]{1,32}$")
 
 // create a new status type
 func (s *projService) CreateStatusType(ctx context.Context, req *pb.CreateStatusTypeRequest) (*pb.CreateStatusTypeResponse, error) {
-	s.logger.Printf("CreateStatusType called, id:%d, name: %s, desc: %s\n", req.GetStatusId(), req.GetStatusName(), req.GetDescription())
 	resp := &pb.CreateStatusTypeResponse{}
 	if !nameValidator.MatchString(req.GetStatusName()) {
 		resp.ErrorCode = 510
@@ -51,7 +51,7 @@ func (s *projService) CreateStatusType(ctx context.Context, req *pb.CreateStatus
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -65,7 +65,7 @@ func (s *projService) CreateStatusType(ctx context.Context, req *pb.CreateStatus
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -74,7 +74,6 @@ func (s *projService) CreateStatusType(ctx context.Context, req *pb.CreateStatus
 
 // update a status type
 func (s *projService) UpdateStatusType(ctx context.Context, req *pb.UpdateStatusTypeRequest) (*pb.UpdateStatusTypeResponse, error) {
-	s.logger.Printf("UpdateStatusType called, id:%d, name: %s, desc: %s\n", req.GetStatusId(), req.GetStatusName(), req.GetDescription())
 	resp := &pb.UpdateStatusTypeResponse{}
 	var err error
 
@@ -83,7 +82,7 @@ func (s *projService) UpdateStatusType(ctx context.Context, req *pb.UpdateStatus
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -104,7 +103,7 @@ func (s *projService) UpdateStatusType(ctx context.Context, req *pb.UpdateStatus
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -113,7 +112,6 @@ func (s *projService) UpdateStatusType(ctx context.Context, req *pb.UpdateStatus
 
 // delete a status type
 func (s *projService) DeleteStatusType(ctx context.Context, req *pb.DeleteStatusTypeRequest) (*pb.DeleteStatusTypeResponse, error) {
-	s.logger.Printf("DeleteStatusType called, id:%d\n", req.GetStatusId())
 	resp := &pb.DeleteStatusTypeResponse{}
 	var err error
 
@@ -122,7 +120,7 @@ func (s *projService) DeleteStatusType(ctx context.Context, req *pb.DeleteStatus
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -142,7 +140,7 @@ func (s *projService) DeleteStatusType(ctx context.Context, req *pb.DeleteStatus
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -151,7 +149,6 @@ func (s *projService) DeleteStatusType(ctx context.Context, req *pb.DeleteStatus
 
 // get status type by id
 func (s *projService) GetStatusType(ctx context.Context, req *pb.GetStatusTypeRequest) (*pb.GetStatusTypeResponse, error) {
-	s.logger.Printf("GetStatusType called, id:%d\n", req.GetStatusId())
 	resp := &pb.GetStatusTypeResponse{}
 	var err error
 
@@ -160,7 +157,7 @@ func (s *projService) GetStatusType(ctx context.Context, req *pb.GetStatusTypeRe
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -188,7 +185,7 @@ func (s *projService) GetStatusType(ctx context.Context, req *pb.GetStatusTypeRe
 		resp.ErrorMessage = "not found"
 		err = nil
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		err = nil
@@ -199,7 +196,6 @@ func (s *projService) GetStatusType(ctx context.Context, req *pb.GetStatusTypeRe
 
 // get all status types for this mservice id
 func (s *projService) GetStatusTypes(ctx context.Context, req *pb.GetStatusTypesRequest) (*pb.GetStatusTypesResponse, error) {
-	s.logger.Printf("GetStatusTypes called, mservice_id:%d\n", req.GetMserviceId())
 	resp := &pb.GetStatusTypesResponse{}
 	var err error
 
@@ -208,7 +204,7 @@ func (s *projService) GetStatusTypes(ctx context.Context, req *pb.GetStatusTypes
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -219,7 +215,7 @@ func (s *projService) GetStatusTypes(ctx context.Context, req *pb.GetStatusTypes
 	rows, err := stmt.Query(req.GetMserviceId())
 
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -235,7 +231,7 @@ func (s *projService) GetStatusTypes(ctx context.Context, req *pb.GetStatusTypes
 			&statusType.StatusName, &statusType.Description)
 
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -251,7 +247,6 @@ func (s *projService) GetStatusTypes(ctx context.Context, req *pb.GetStatusTypes
 
 // create a new task
 func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
-	s.logger.Printf("CreateTask called, name: %s, desc: %s\n", req.GetName(), req.GetDescription())
 	resp := &pb.CreateTaskResponse{}
 
 	if !nameValidator.MatchString(req.GetName()) {
@@ -271,7 +266,7 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 	sqlstring1 := `SELECT inbProjectId FROM tb_Project WHERE inbProjectId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -289,7 +284,7 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 		resp.ErrorMessage = "project for task not found"
 		return resp, nil
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -301,7 +296,7 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 		sqlstring2 := `SELECT inbTaskId FROM tb_Task WHERE inbTaskId = ? AND inbProjectId = ? AND bitIsDeleted = 0`
 		stmt2, err := s.db.Prepare(sqlstring2)
 		if err != nil {
-			s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Prepare", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = "db.Prepare failed"
 			return resp, nil
@@ -318,7 +313,7 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 			resp.ErrorMessage = "parent task not found"
 			return resp, nil
 		} else {
-			s.logger.Printf("queryRow failed: %v\n", err)
+			level.Error(s.logger).Log("what", "QueryRow", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -331,7 +326,7 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 		intPosition) VALUES (NOW(), NOW(), NOW(), 0, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -348,9 +343,9 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 	if err == nil {
 		taskId, err := res.LastInsertId()
 		if err != nil {
-			s.logger.Printf("LastInsertId err: %v\n", err)
+			level.Error(s.logger).Log("what", "LastInsertId", "error", err)
 		} else {
-			s.logger.Printf("taskId: %d", taskId)
+			level.Debug(s.logger).Log("taskId", taskId)
 		}
 
 		resp.TaskId = taskId
@@ -358,7 +353,7 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -367,7 +362,6 @@ func (s *projService) CreateTask(ctx context.Context, req *pb.CreateTaskRequest)
 
 // update an existing task
 func (s *projService) UpdateTask(ctx context.Context, req *pb.UpdateTaskRequest) (*pb.UpdateTaskResponse, error) {
-	s.logger.Printf("UpdateTask called, id: %d\n", req.GetTaskId())
 	resp := &pb.UpdateTaskResponse{}
 	var err error
 
@@ -390,7 +384,7 @@ func (s *projService) UpdateTask(ctx context.Context, req *pb.UpdateTaskRequest)
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -415,7 +409,7 @@ func (s *projService) UpdateTask(ctx context.Context, req *pb.UpdateTaskRequest)
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -424,7 +418,6 @@ func (s *projService) UpdateTask(ctx context.Context, req *pb.UpdateTaskRequest)
 
 // delete an existing task
 func (s *projService) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest) (*pb.DeleteTaskResponse, error) {
-	s.logger.Printf("DeleteTask called, id: %d\n", req.GetTaskId())
 	resp := &pb.DeleteTaskResponse{}
 	var err error
 
@@ -433,7 +426,7 @@ func (s *projService) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest)
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -453,7 +446,7 @@ func (s *projService) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest)
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -462,7 +455,6 @@ func (s *projService) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest)
 
 // get a task by id
 func (s *projService) GetTaskById(ctx context.Context, req *pb.GetTaskByIdRequest) (*pb.GetTaskByIdResponse, error) {
-	s.logger.Printf("GetTaskById called, id: %d\n", req.GetTaskId())
 	resp := &pb.GetTaskByIdResponse{}
 
 	var err error
@@ -475,7 +467,7 @@ func (s *projService) GetTaskById(ctx context.Context, req *pb.GetTaskByIdReques
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -506,7 +498,7 @@ func (s *projService) GetTaskById(ctx context.Context, req *pb.GetTaskByIdReques
 		resp.ErrorMessage = "not found"
 		err = nil
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		err = nil
@@ -515,16 +507,15 @@ func (s *projService) GetTaskById(ctx context.Context, req *pb.GetTaskByIdReques
 	return resp, err
 }
 
-// get a task with asspciations by id
+// get a task with associations by id
 func (s *projService) GetTaskWrapperById(ctx context.Context, req *pb.GetTaskWrapperByIdRequest) (*pb.GetTaskWrapperByIdResponse, error) {
-	s.logger.Printf("GetTaskWrapperById called, id: %d\n", req.GetTaskId())
 	resp := &pb.GetTaskWrapperByIdResponse{}
 	var err error
 
 	sqlstring1 := `SELECT inbProjectId FROM tb_Task WHERE inbTaskId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -559,7 +550,6 @@ func (s *projService) GetTaskWrapperById(ctx context.Context, req *pb.GetTaskWra
 
 // reorder the positions of child tasks
 func (s *projService) ReorderChildTasks(ctx context.Context, req *pb.ReorderChildTasksRequest) (*pb.ReorderChildTasksResponse, error) {
-	s.logger.Printf("ReorderChildTasks called, id: %d\n", req.GetTaskId())
 	resp := &pb.ReorderChildTasksResponse{}
 	var err error
 
@@ -568,7 +558,7 @@ func (s *projService) ReorderChildTasks(ctx context.Context, req *pb.ReorderChil
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -589,7 +579,7 @@ func (s *projService) ReorderChildTasks(ctx context.Context, req *pb.ReorderChil
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		return resp, nil
 	}
 
@@ -598,7 +588,7 @@ func (s *projService) ReorderChildTasks(ctx context.Context, req *pb.ReorderChil
 
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -619,7 +609,7 @@ func (s *projService) ReorderChildTasks(ctx context.Context, req *pb.ReorderChil
 		} else {
 			resp.ErrorCode = 501
 			resp.ErrorMessage = err.Error()
-			s.logger.Printf("err: %v\n", err)
+			level.Error(s.logger).Log("what", "Exec", "error", err)
 			return resp, nil
 		}
 	}
@@ -629,7 +619,6 @@ func (s *projService) ReorderChildTasks(ctx context.Context, req *pb.ReorderChil
 
 // get list of tasks in project
 func (s *projService) GetTasksByProject(ctx context.Context, req *pb.GetTasksByProjectRequest) (*pb.GetTasksByProjectResponse, error) {
-	s.logger.Printf("GetTasksByProject called, project_id: %d\n", req.GetProjectId())
 	resp := &pb.GetTasksByProjectResponse{}
 	var err error
 

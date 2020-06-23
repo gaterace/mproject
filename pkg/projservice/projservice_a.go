@@ -15,6 +15,7 @@ package projservice
 
 import (
 	"database/sql"
+	"github.com/go-kit/kit/log/level"
 
 	"github.com/gaterace/dml-go/pkg/dml"
 
@@ -42,7 +43,7 @@ func (s *projService) GetProjectByIdHelper(projectId int64, mserviceId int64) (*
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -71,7 +72,7 @@ func (s *projService) GetProjectByIdHelper(projectId int64, mserviceId int64) (*
 		resp.ErrorMessage = "not found"
 
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 
@@ -93,7 +94,7 @@ func (s *projService) GetProjectByNameHelper(projectName string, mserviceId int6
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -122,7 +123,7 @@ func (s *projService) GetProjectByNameHelper(projectName string, mserviceId int6
 		resp.ErrorMessage = "not found"
 
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 
@@ -144,7 +145,7 @@ func (s *projService) GetTeamMembersHelper(projectId int64, mserviceId int64) (*
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -154,7 +155,7 @@ func (s *projService) GetTeamMembersHelper(projectId int64, mserviceId int64) (*
 
 	rows, err := stmt.Query(projectId, mserviceId)
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -170,7 +171,7 @@ func (s *projService) GetTeamMembersHelper(projectId int64, mserviceId int64) (*
 			&member.Name, &member.ProjectRoleId, &member.Email, &member.RoleName)
 
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -198,7 +199,7 @@ func (s *projService) GetProjectTasksHelper(projectId int64, mserviceId int64) (
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -208,7 +209,7 @@ func (s *projService) GetProjectTasksHelper(projectId int64, mserviceId int64) (
 
 	rows, err := stmt.Query(projectId, mserviceId)
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -228,7 +229,7 @@ func (s *projService) GetProjectTasksHelper(projectId int64, mserviceId int64) (
 			&task.Position, &task.StatusName)
 
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -313,7 +314,7 @@ func (s *projService) GetTaskToMemberHelper(projectId int64, mserviceId int64) (
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -323,7 +324,7 @@ func (s *projService) GetTaskToMemberHelper(projectId int64, mserviceId int64) (
 
 	rows, err := stmt.Query(projectId, mserviceId)
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -338,7 +339,7 @@ func (s *projService) GetTaskToMemberHelper(projectId int64, mserviceId int64) (
 
 		err := rows.Scan(&t2m.ProjectId, &t2m.TaskId, &t2m.MemberId, &created, &modified, &t2m.MserviceId, &task_hours)
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil

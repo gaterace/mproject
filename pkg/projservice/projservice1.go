@@ -18,7 +18,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 	"strings"
 	"time"
 
@@ -31,7 +32,7 @@ import (
 var NotImplemented = errors.New("not implemented")
 
 type projService struct {
-	logger *log.Logger
+	logger log.Logger
 	db     *sql.DB
 	startSecs int64
 }
@@ -44,7 +45,7 @@ func NewProjectService() *projService {
 }
 
 // Set the logger for the projService instance.
-func (s *projService) SetLogger(logger *log.Logger) {
+func (s *projService) SetLogger(logger log.Logger) {
 	s.logger = logger
 }
 
@@ -64,7 +65,6 @@ func (s *projService) NewApiServer(gServer *grpc.Server) error {
 
 // create a new project
 func (s *projService) CreateProject(ctx context.Context, req *pb.CreateProjectRequest) (*pb.CreateProjectResponse, error) {
-	s.logger.Printf("CreateProject called, name: %s, desc: %s, status_id: %d\n", req.GetName(), req.GetDescription(), req.GetStatusId())
 	resp := &pb.CreateProjectResponse{}
 	if !nameValidator.MatchString(req.GetName()) {
 		resp.ErrorCode = 510
@@ -84,7 +84,7 @@ func (s *projService) CreateProject(ctx context.Context, req *pb.CreateProjectRe
 		intStatusId, dtmStartDate, dtmEndDate) VALUES(NOW(), NOW(), NOW(), 0, 1, ?, ?, ?, ?, ?, ?)`
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -99,9 +99,9 @@ func (s *projService) CreateProject(ctx context.Context, req *pb.CreateProjectRe
 	if err == nil {
 		projectId, err := res.LastInsertId()
 		if err != nil {
-			s.logger.Printf("LastInsertId err: %v\n", err)
+			level.Error(s.logger).Log("what", "LastInsertId", "error", err)
 		} else {
-			s.logger.Printf("projectId: %d", projectId)
+			level.Debug(s.logger).Log("projectId", projectId)
 		}
 
 		resp.ProjectId = projectId
@@ -109,7 +109,7 @@ func (s *projService) CreateProject(ctx context.Context, req *pb.CreateProjectRe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -119,7 +119,6 @@ func (s *projService) CreateProject(ctx context.Context, req *pb.CreateProjectRe
 
 // update an existing project
 func (s *projService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest) (*pb.UpdateProjectResponse, error) {
-	s.logger.Printf("UpdateProject called, pid: %d, name: %s, desc: %s, status_id: %d\n", req.GetProjectId(), req.GetName(), req.GetDescription(), req.GetStatusId())
 	resp := &pb.UpdateProjectResponse{}
 	if !nameValidator.MatchString(req.GetName()) {
 		resp.ErrorCode = 510
@@ -139,7 +138,7 @@ func (s *projService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRe
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -162,7 +161,7 @@ func (s *projService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -172,7 +171,6 @@ func (s *projService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRe
 
 // delete an existing project
 func (s *projService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*pb.DeleteProjectResponse, error) {
-	s.logger.Printf("DeleteProject called, pid: %d, version: %d\n", req.GetProjectId(), req.GetVersion())
 	resp := &pb.DeleteProjectResponse{}
 
 	sqlstring := `UPDATE tb_Project SET dtmDeleted = NOW(), intVersion = ?, bitIsDeleted = 1
@@ -180,7 +178,7 @@ func (s *projService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRe
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -200,7 +198,7 @@ func (s *projService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -210,14 +208,13 @@ func (s *projService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRe
 
 // get list of project names for this mservice id
 func (s *projService) GetProjectNames(ctx context.Context, req *pb.GetProjectNamesRequest) (*pb.GetProjectNamesResponse, error) {
-	s.logger.Printf("GetProjectByName called, mservice: %d\n", req.GetMserviceId())
 	resp := &pb.GetProjectNamesResponse{}
 	var err error
 
 	sqlstring := `SELECT chvName FROM tb_Project WHERE inbMserviceId = ? AND  bitIsDeleted = 0`
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -228,7 +225,7 @@ func (s *projService) GetProjectNames(ctx context.Context, req *pb.GetProjectNam
 	rows, err := stmt.Query(req.GetMserviceId())
 
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -240,7 +237,7 @@ func (s *projService) GetProjectNames(ctx context.Context, req *pb.GetProjectNam
 		err = rows.Scan(&projectName)
 
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -254,7 +251,6 @@ func (s *projService) GetProjectNames(ctx context.Context, req *pb.GetProjectNam
 
 // get project entity by name
 func (s *projService) GetProjectByName(ctx context.Context, req *pb.GetProjectByNameRequest) (*pb.GetProjectByNameResponse, error) {
-	s.logger.Printf("GetProjectByName called, name: %s\n", req.GetName())
 	resp := &pb.GetProjectByNameResponse{}
 	var err error
 
@@ -270,7 +266,6 @@ func (s *projService) GetProjectByName(ctx context.Context, req *pb.GetProjectBy
 
 // get project entity by id
 func (s *projService) GetProjectById(ctx context.Context, req *pb.GetProjectByIdRequest) (*pb.GetProjectByIdResponse, error) {
-	s.logger.Printf("GetProjectById called, project_id: %d\n", req.GetProjectId())
 	resp := &pb.GetProjectByIdResponse{}
 	var err error
 
@@ -286,7 +281,6 @@ func (s *projService) GetProjectById(ctx context.Context, req *pb.GetProjectById
 
 // get project entity wrapper by name
 func (s *projService) GetProjectWrapperByName(ctx context.Context, req *pb.GetProjectWrapperByNameRequest) (*pb.GetProjectWrapperByNameResponse, error) {
-	s.logger.Printf("GetProjectWrapperByName called, name: %s\n", req.GetName())
 	resp := &pb.GetProjectWrapperByNameResponse{}
 	var err error
 
@@ -327,7 +321,6 @@ func (s *projService) GetProjectWrapperByName(ctx context.Context, req *pb.GetPr
 
 // get project entity wrapper by id
 func (s *projService) GetProjectWrapperById(ctx context.Context, req *pb.GetProjectWrapperByIdRequest) (*pb.GetProjectWrapperByIdResponse, error) {
-	s.logger.Printf("GetProjectWrapperById called, project_id: %d\n", req.GetProjectId())
 	resp := &pb.GetProjectWrapperByIdResponse{}
 	var err error
 

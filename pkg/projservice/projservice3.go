@@ -16,6 +16,7 @@ package projservice
 import (
 	"context"
 	"database/sql"
+	"github.com/go-kit/kit/log/level"
 	"strings"
 	"time"
 
@@ -28,7 +29,6 @@ import (
 
 // create a new team member for the project
 func (s *projService) CreateTeamMember(ctx context.Context, req *pb.CreateTeamMemberRequest) (*pb.CreateTeamMemberResponse, error) {
-	s.logger.Printf("CreateTeamMember called, name: %s\n", req.GetName())
 	resp := &pb.CreateTeamMemberResponse{}
 	var err error
 
@@ -37,7 +37,7 @@ func (s *projService) CreateTeamMember(ctx context.Context, req *pb.CreateTeamMe
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -49,9 +49,9 @@ func (s *projService) CreateTeamMember(ctx context.Context, req *pb.CreateTeamMe
 	if err == nil {
 		memberId, err := res.LastInsertId()
 		if err != nil {
-			s.logger.Printf("LastInsertId err: %v\n", err)
+			level.Error(s.logger).Log("what", "LastInsertId", "error", err)
 		} else {
-			s.logger.Printf("memberId: %d", memberId)
+			level.Debug(s.logger).Log("memberId", memberId)
 		}
 
 		resp.MemberId = memberId
@@ -59,7 +59,7 @@ func (s *projService) CreateTeamMember(ctx context.Context, req *pb.CreateTeamMe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -68,7 +68,6 @@ func (s *projService) CreateTeamMember(ctx context.Context, req *pb.CreateTeamMe
 
 // update an existing team member
 func (s *projService) UpdateTeamMember(ctx context.Context, req *pb.UpdateTeamMemberRequest) (*pb.UpdateTeamMemberResponse, error) {
-	s.logger.Printf("UpdateTeamMember called, id: %d\n", req.GetMemberId())
 	resp := &pb.UpdateTeamMemberResponse{}
 	var err error
 
@@ -77,7 +76,7 @@ func (s *projService) UpdateTeamMember(ctx context.Context, req *pb.UpdateTeamMe
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -99,7 +98,7 @@ func (s *projService) UpdateTeamMember(ctx context.Context, req *pb.UpdateTeamMe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -108,7 +107,6 @@ func (s *projService) UpdateTeamMember(ctx context.Context, req *pb.UpdateTeamMe
 
 // delete an existing team member
 func (s *projService) DeleteTeamMember(ctx context.Context, req *pb.DeleteTeamMemberRequest) (*pb.DeleteTeamMemberResponse, error) {
-	s.logger.Printf("DeleteTeamMember called, id: %d\n", req.GetMemberId())
 	resp := &pb.DeleteTeamMemberResponse{}
 	var err error
 
@@ -117,7 +115,7 @@ func (s *projService) DeleteTeamMember(ctx context.Context, req *pb.DeleteTeamMe
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -137,7 +135,7 @@ func (s *projService) DeleteTeamMember(ctx context.Context, req *pb.DeleteTeamMe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -146,7 +144,6 @@ func (s *projService) DeleteTeamMember(ctx context.Context, req *pb.DeleteTeamMe
 
 // get team member by id
 func (s *projService) GetTeamMemberById(ctx context.Context, req *pb.GetTeamMemberByIdRequest) (*pb.GetTeamMemberByIdResponse, error) {
-	s.logger.Printf("GetTeamMemberById called, id: %d\n", req.GetMemberId())
 	resp := &pb.GetTeamMemberByIdResponse{}
 	var err error
 
@@ -158,7 +155,7 @@ func (s *projService) GetTeamMemberById(ctx context.Context, req *pb.GetTeamMemb
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -183,7 +180,7 @@ func (s *projService) GetTeamMemberById(ctx context.Context, req *pb.GetTeamMemb
 		resp.ErrorMessage = "not found"
 		err = nil
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		err = nil
@@ -194,7 +191,6 @@ func (s *projService) GetTeamMemberById(ctx context.Context, req *pb.GetTeamMemb
 
 // get team members by project
 func (s *projService) GetTeamMemberByProject(ctx context.Context, req *pb.GetTeamMemberByProjectRequest) (*pb.GetTeamMemberByProjectResponse, error) {
-	s.logger.Printf("GetTeamMemberByProject called, id: %d\n", req.GetProjectId())
 	resp := &pb.GetTeamMemberByProjectResponse{}
 	var err error
 
@@ -210,14 +206,13 @@ func (s *projService) GetTeamMemberByProject(ctx context.Context, req *pb.GetTea
 
 // get team members by task
 func (s *projService) GetTeamMemberByTask(ctx context.Context, req *pb.GetTeamMemberByTaskRequest) (*pb.GetTeamMemberByTaskResponse, error) {
-	s.logger.Printf("GetTeamMemberByTask called, tid: %d\n", req.GetTaskId())
 	resp := &pb.GetTeamMemberByTaskResponse{}
 	var err error
 
 	sqlstring1 := `SELECT inbProjectId FROM tb_Task WHERE inbTaskId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -242,7 +237,7 @@ func (s *projService) GetTeamMemberByTask(ctx context.Context, req *pb.GetTeamMe
 	AND t.bitIsDeleted = 0 AND m.bitIsDeleted = 0`
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -251,7 +246,7 @@ func (s *projService) GetTeamMemberByTask(ctx context.Context, req *pb.GetTeamMe
 	defer stmt.Close()
 	rows, err := stmt.Query(existingProjectId, req.GetTaskId(), req.GetMserviceId())
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -268,7 +263,7 @@ func (s *projService) GetTeamMemberByTask(ctx context.Context, req *pb.GetTeamMe
 			&member.Name, &member.ProjectRoleId, &member.Email, &task_hours, &member.RoleName)
 
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -289,7 +284,6 @@ func (s *projService) GetTeamMemberByTask(ctx context.Context, req *pb.GetTeamMe
 
 // add a team member to a task
 func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMemberToTaskRequest) (*pb.AddTeamMemberToTaskResponse, error) {
-	s.logger.Printf("AddTeamMemberToTask called, tid: %d, mid: %d\n", req.GetTaskId(), req.GetMemberId())
 	resp := &pb.AddTeamMemberToTaskResponse{}
 	var err error
 
@@ -297,7 +291,7 @@ func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMe
 	sqlstring1 := `SELECT inbProjectId FROM tb_Task WHERE inbTaskId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -317,7 +311,7 @@ func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMe
 	sqlstring2 := `SELECT inbMemberId FROM tb_TeamMember WHERE inbMemberId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt2, err := s.db.Prepare(sqlstring2)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -340,7 +334,7 @@ func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMe
 	VALUES (?, ?, ?, NOW(), NOW(), NOW(), 0, ?, 0.0)`
 	stmt3, err := s.db.Prepare(sqlstring3)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -361,7 +355,7 @@ func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMe
 
 	stmt4, err := s.db.Prepare(sqlstring4)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -380,7 +374,7 @@ func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMe
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -390,14 +384,13 @@ func (s *projService) AddTeamMemberToTask(ctx context.Context, req *pb.AddTeamMe
 
 // remove a team member from a task
 func (s *projService) RemoveTeamMemberFromTask(ctx context.Context, req *pb.RemoveTeamMemberFromTaskRequest) (*pb.RemoveTeamMemberFromTaskResponse, error) {
-	s.logger.Printf("RemoveTeamMemberFromTask called, tid: %d, mid: %d\n", req.GetTaskId(), req.GetMemberId())
 	resp := &pb.RemoveTeamMemberFromTaskResponse{}
 	var err error
 
 	sqlstring1 := `SELECT inbProjectId FROM tb_Task WHERE inbTaskId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -419,7 +412,7 @@ func (s *projService) RemoveTeamMemberFromTask(ctx context.Context, req *pb.Remo
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -438,7 +431,7 @@ func (s *projService) RemoveTeamMemberFromTask(ctx context.Context, req *pb.Remo
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -447,14 +440,13 @@ func (s *projService) RemoveTeamMemberFromTask(ctx context.Context, req *pb.Remo
 
 // add to existing task hours for task and member
 func (s *projService) AddTaskHours(ctx context.Context, req *pb.AddTaskHoursRequest) (*pb.AddTaskHoursResponse, error) {
-	s.logger.Printf("AddTaskHours called, tid: %d, mid: %d\n", req.GetTaskId(), req.GetMemberId())
 	resp := &pb.AddTaskHoursResponse{}
 	var err error
 
 	sqlstring1 := `SELECT inbProjectId FROM tb_Task WHERE inbTaskId = ? AND inbMserviceId = ? AND bitIsDeleted = 0`
 	stmt1, err := s.db.Prepare(sqlstring1)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -476,7 +468,7 @@ func (s *projService) AddTaskHours(ctx context.Context, req *pb.AddTaskHoursRequ
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -495,7 +487,7 @@ func (s *projService) AddTaskHours(ctx context.Context, req *pb.AddTaskHoursRequ
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -504,7 +496,6 @@ func (s *projService) AddTaskHours(ctx context.Context, req *pb.AddTaskHoursRequ
 
 // create a new project role type
 func (s *projService) CreateProjectRoleType(ctx context.Context, req *pb.CreateProjectRoleTypeRequest) (*pb.CreateProjectRoleTypeResponse, error) {
-	s.logger.Printf("CreateProjectRoleType called, id:%d, name: %s, desc: %s\n", req.GetProjectRoleId(), req.GetRoleName(), req.GetDescription())
 	resp := &pb.CreateProjectRoleTypeResponse{}
 	if !nameValidator.MatchString(req.GetRoleName()) {
 		resp.ErrorCode = 510
@@ -525,7 +516,7 @@ func (s *projService) CreateProjectRoleType(ctx context.Context, req *pb.CreateP
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -539,7 +530,7 @@ func (s *projService) CreateProjectRoleType(ctx context.Context, req *pb.CreateP
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -548,7 +539,6 @@ func (s *projService) CreateProjectRoleType(ctx context.Context, req *pb.CreateP
 
 // update an existing project role type
 func (s *projService) UpdateProjectRoleType(ctx context.Context, req *pb.UpdateProjectRoleTypeRequest) (*pb.UpdateProjectRoleTypeResponse, error) {
-	s.logger.Printf("UpdateProjectRoleType called, id:%d, name: %s, desc: %s\n", req.GetProjectRoleId(), req.GetRoleName(), req.GetDescription())
 	resp := &pb.UpdateProjectRoleTypeResponse{}
 	var err error
 
@@ -557,7 +547,7 @@ func (s *projService) UpdateProjectRoleType(ctx context.Context, req *pb.UpdateP
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -579,7 +569,7 @@ func (s *projService) UpdateProjectRoleType(ctx context.Context, req *pb.UpdateP
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -588,7 +578,6 @@ func (s *projService) UpdateProjectRoleType(ctx context.Context, req *pb.UpdateP
 
 // delete an existing project role type
 func (s *projService) DeleteProjectRoleType(ctx context.Context, req *pb.DeleteProjectRoleTypeRequest) (*pb.DeleteProjectRoleTypeResponse, error) {
-	s.logger.Printf("DeleteProjectRoleType called, id:%d\n", req.GetProjectRoleId())
 	resp := &pb.DeleteProjectRoleTypeResponse{}
 	var err error
 
@@ -597,7 +586,7 @@ func (s *projService) DeleteProjectRoleType(ctx context.Context, req *pb.DeleteP
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -618,7 +607,7 @@ func (s *projService) DeleteProjectRoleType(ctx context.Context, req *pb.DeleteP
 	} else {
 		resp.ErrorCode = 501
 		resp.ErrorMessage = err.Error()
-		s.logger.Printf("err: %v\n", err)
+		level.Error(s.logger).Log("what", "Exec", "error", err)
 		err = nil
 	}
 
@@ -627,7 +616,6 @@ func (s *projService) DeleteProjectRoleType(ctx context.Context, req *pb.DeleteP
 
 // get a project role type by id
 func (s *projService) GetProjectRoleType(ctx context.Context, req *pb.GetProjectRoleTypeRequest) (*pb.GetProjectRoleTypeResponse, error) {
-	s.logger.Printf("GetProjectRoleType called, id:%d\n", req.GetProjectRoleId())
 	resp := &pb.GetProjectRoleTypeResponse{}
 	var err error
 
@@ -636,7 +624,7 @@ func (s *projService) GetProjectRoleType(ctx context.Context, req *pb.GetProject
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -662,7 +650,7 @@ func (s *projService) GetProjectRoleType(ctx context.Context, req *pb.GetProject
 		resp.ErrorMessage = "not found"
 		err = nil
 	} else {
-		s.logger.Printf("queryRow failed: %v\n", err)
+		level.Error(s.logger).Log("what", "QueryRow", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		err = nil
@@ -673,7 +661,6 @@ func (s *projService) GetProjectRoleType(ctx context.Context, req *pb.GetProject
 
 // get all project role types for an mservice id
 func (s *projService) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjectRoleTypesRequest) (*pb.GetProjectRoleTypesResponse, error) {
-	s.logger.Printf("GetProjectRoleTypes called, mservice_id:%d\n", req.GetMserviceId())
 	resp := &pb.GetProjectRoleTypesResponse{}
 	var err error
 
@@ -682,7 +669,7 @@ func (s *projService) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjec
 
 	stmt, err := s.db.Prepare(sqlstring)
 	if err != nil {
-		s.logger.Printf("db.Prepare sqlstring failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Prepare", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = "db.Prepare failed"
 		return resp, nil
@@ -692,7 +679,7 @@ func (s *projService) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjec
 	rows, err := stmt.Query(req.GetMserviceId())
 
 	if err != nil {
-		s.logger.Printf("query failed: %v\n", err)
+		level.Error(s.logger).Log("what", "Query", "error", err)
 		resp.ErrorCode = 500
 		resp.ErrorMessage = err.Error()
 		return resp, nil
@@ -707,7 +694,7 @@ func (s *projService) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjec
 		err := rows.Scan(&role.ProjectRoleId, &created, &modified, &role.Version, &role.MserviceId, &role.RoleName, &role.Description)
 
 		if err != nil {
-			s.logger.Printf("query rows scan  failed: %v\n", err)
+			level.Error(s.logger).Log("what", "Scan", "error", err)
 			resp.ErrorCode = 500
 			resp.ErrorMessage = err.Error()
 			return resp, nil
@@ -724,7 +711,6 @@ func (s *projService) GetProjectRoleTypes(ctx context.Context, req *pb.GetProjec
 
 // get current server version and uptime - health check
 func (s *projService) GetServerVersion(ctx context.Context, req *pb.GetServerVersionRequest) (*pb.GetServerVersionResponse, error) {
-	s.logger.Printf("GetServerVersion called\n")
 	resp := &pb.GetServerVersionResponse{}
 
 	currentSecs := time.Now().Unix()
