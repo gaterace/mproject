@@ -1,4 +1,4 @@
-// Copyright 2019 Demian Harvill
+// Copyright 2019-2020 Demian Harvill
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,9 +20,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	_ "github.com/go-sql-driver/mysql"
@@ -251,7 +252,6 @@ func (s *ProjAuth) DeleteProject(ctx context.Context, req *pb.DeleteProjectReque
 		"projectid", req.GetProjectId(),
 		"errcode", resp.GetErrorCode(), "duration", duration)
 
-
 	return resp, err
 }
 
@@ -422,7 +422,7 @@ func (s *ProjAuth) CreateStatusType(ctx context.Context, req *pb.CreateStatusTyp
 		projsvc := GetStringFromClaims(claims, "projsvc")
 		if projsvc == "projadmin" {
 			req.MserviceId = GetInt64FromClaims(claims, "aid")
-			resp, err =  s.projService.CreateStatusType(ctx, req)
+			resp, err = s.projService.CreateStatusType(ctx, req)
 		}
 	} else {
 		if err.Error() == tokenExpiredMatch {
@@ -453,7 +453,7 @@ func (s *ProjAuth) UpdateStatusType(ctx context.Context, req *pb.UpdateStatusTyp
 		projsvc := GetStringFromClaims(claims, "projsvc")
 		if projsvc == "projadmin" {
 			req.MserviceId = GetInt64FromClaims(claims, "aid")
-			resp, err =  s.projService.UpdateStatusType(ctx, req)
+			resp, err = s.projService.UpdateStatusType(ctx, req)
 		}
 	} else {
 		if err.Error() == tokenExpiredMatch {
@@ -468,7 +468,6 @@ func (s *ProjAuth) UpdateStatusType(ctx context.Context, req *pb.UpdateStatusTyp
 	level.Info(s.logger).Log("endpoint", "UpdateStatusType",
 		"statustype", req.GetStatusName(),
 		"errcode", resp.GetErrorCode(), "duration", duration)
-
 
 	return resp, err
 }
@@ -485,7 +484,7 @@ func (s *ProjAuth) DeleteStatusType(ctx context.Context, req *pb.DeleteStatusTyp
 		projsvc := GetStringFromClaims(claims, "projsvc")
 		if projsvc == "projadmin" {
 			req.MserviceId = GetInt64FromClaims(claims, "aid")
-			resp, err =  s.projService.DeleteStatusType(ctx, req)
+			resp, err = s.projService.DeleteStatusType(ctx, req)
 		}
 	} else {
 		if err.Error() == tokenExpiredMatch {

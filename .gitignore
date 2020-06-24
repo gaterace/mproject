@@ -23,4 +23,5 @@ mproject.sublime-*
 
 cmd/projclient/projclient
 cmd/projserver/projserver
+cmd/projserver/projserver_arm
 

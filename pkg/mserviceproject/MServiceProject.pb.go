@@ -1616,10 +1616,12 @@ type GetProjectWrapperByNameRequest struct {
 	Name string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
 }
 
-func (m *GetProjectWrapperByNameRequest) Reset()                    { *m = GetProjectWrapperByNameRequest{} }
-func (m *GetProjectWrapperByNameRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetProjectWrapperByNameRequest) ProtoMessage()               {}
-func (*GetProjectWrapperByNameRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{20} }
+func (m *GetProjectWrapperByNameRequest) Reset()         { *m = GetProjectWrapperByNameRequest{} }
+func (m *GetProjectWrapperByNameRequest) String() string { return proto.CompactTextString(m) }
+func (*GetProjectWrapperByNameRequest) ProtoMessage()    {}
+func (*GetProjectWrapperByNameRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor0, []int{20}
+}
 
 func (m *GetProjectWrapperByNameRequest) GetMserviceId() int64 {
 	if m != nil {
@@ -3096,10 +3098,12 @@ type GetTeamMemberByProjectResponse struct {
 	TeamMembers []*TeamMember `protobuf:"bytes,3,rep,name=team_members,json=teamMembers" json:"team_members,omitempty"`
 }
 
-func (m *GetTeamMemberByProjectResponse) Reset()                    { *m = GetTeamMemberByProjectResponse{} }
-func (m *GetTeamMemberByProjectResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetTeamMemberByProjectResponse) ProtoMessage()               {}
-func (*GetTeamMemberByProjectResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{57} }
+func (m *GetTeamMemberByProjectResponse) Reset()         { *m = GetTeamMemberByProjectResponse{} }
+func (m *GetTeamMemberByProjectResponse) String() string { return proto.CompactTextString(m) }
+func (*GetTeamMemberByProjectResponse) ProtoMessage()    {}
+func (*GetTeamMemberByProjectResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor0, []int{57}
+}
 
 func (m *GetTeamMemberByProjectResponse) GetErrorCode() int32 {
 	if m != nil {
