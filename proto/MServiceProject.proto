@@ -15,7 +15,7 @@ syntax = "proto3";
 
 package org.gaterace.mservice.project;
 option csharp_namespace = "MServiceProject";
-option go_package = "mserviceproject";
+option go_package = "github.com/gaterace/mproject/pkg/mserviceproject";
 
 import "DmlExtension.proto";
 

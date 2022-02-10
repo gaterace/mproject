@@ -44,6 +44,7 @@ const (
 var NotImplemented = errors.New("not implemented")
 
 type ProjAuth struct {
+	pb.UnimplementedMServiceProjectServer
 	logger          log.Logger
 	db              *sql.DB
 	rsaPSSPublicKey *rsa.PublicKey

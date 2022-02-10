@@ -33,6 +33,7 @@ import (
 var NotImplemented = errors.New("not implemented")
 
 type projService struct {
+	pb.UnimplementedMServiceProjectServer
 	logger    log.Logger
 	db        *sql.DB
 	startSecs int64
