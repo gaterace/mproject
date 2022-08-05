@@ -22,6 +22,9 @@ vendor/*
 mproject.sublime-*
 
 cmd/projclient/projclient
+cmd/projclient/mproject.config
 cmd/projserver/projserver
+cmd/projserver/conf.yaml
 cmd/projserver/projserver_arm
+cmd/projserver/projserver_arm64
 
