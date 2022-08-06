@@ -42,7 +42,7 @@ func main() {
 	cli := &cli{}
 
 	cmd := &cobra.Command{
-		Use:     "invserver",
+		Use:     "projserver",
 		PreRunE: cli.setupConfig,
 		RunE:    cli.run,
 	}
@@ -71,12 +71,10 @@ type cfg struct {
 	KeyFile     string
 	Tls         bool
 	Port        int
-	RestPort    int
 	DbUser      string
 	DbPwd       string
 	DbTransport string
 	JwtPubFile  string
-	CorsOrigin  string
 }
 
 func setupFlags(cmd *cobra.Command) error {
@@ -86,7 +84,7 @@ func setupFlags(cmd *cobra.Command) error {
 	cmd.Flags().String("cert_file", "", "Path to certificate file.")
 	cmd.Flags().String("key_file", "", "Path to certificate key file.")
 	cmd.Flags().Bool("tls", false, "Use tls for connection.")
-	cmd.Flags().Int("port", 50052, "Port for RPC connections")
+	cmd.Flags().Int("port", 50054, "Port for RPC connections")
 
 	cmd.Flags().String("db_user", "", "Database user name.")
 	cmd.Flags().String("db_pwd", "", "Database user password.")
@@ -161,10 +159,6 @@ func (c *cli) run(cmd *cobra.Command, args []string) error {
 	level.Info(logger).Log("db_user", db_user)
 	level.Info(logger).Log("db_transport", db_transport)
 	level.Info(logger).Log("jwt_pub_file", jwt_pub_file)
-
-	if port == 0 {
-		port = 50052
-	}
 
 	listen_port := ":" + strconv.Itoa(int(port))
 	// fmt.Println(listen_port)
